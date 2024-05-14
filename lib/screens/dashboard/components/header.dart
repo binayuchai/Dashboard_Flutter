@@ -12,11 +12,17 @@ class Header extends StatelessWidget {
   Widget build(BuildContext context) {
 
     return Row(
+      mainAxisAlignment: MainAxisAlignment.start,
+   
    // Menu to show and hide
       children: [
         IconButton(
+
             onPressed: context.read<MenuAppController>().controlMenu,
-            icon: Icon(Icons.menu)),
+            icon: Icon(
+                Icons.menu,
+
+            )),
         Expanded(child: SearchField()),
 
       ],
@@ -36,7 +42,7 @@ class SearchField extends StatelessWidget {
         fillColor: secondaryColor,
         border:OutlineInputBorder(
           borderSide: BorderSide.none,
-          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderRadius: BorderRadius.all(Radius.circular(5)),
         )
 
       ),
