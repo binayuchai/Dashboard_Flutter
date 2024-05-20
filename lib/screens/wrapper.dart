@@ -1,5 +1,12 @@
+import 'package:dashboard_flutter/models/customUser.dart';
+import 'package:dashboard_flutter/screens/authentications/login.dart';
+import 'package:dashboard_flutter/screens/authentications/signup_w.dart';
 import 'package:dashboard_flutter/screens/dashboard/dashboard_screen.dart';
+import 'package:dashboard_flutter/screens/main/main_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import 'package:dashboard_flutter/controller/MenuAppController.dart';
 
 
 
@@ -12,6 +19,19 @@ class Wrapper extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DashboardScreen();
+    final user = Provider.of<CustomUser?>(context);
+    print("THis is --------------> ${user}");
+
+    //check either Home or Authenticate widget
+
+    if (user == null){
+
+      return LoginWidget();
+
+    }
+    else{
+      return MainScreen();
+    }
+
   }
 }

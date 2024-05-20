@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "924004577795",
+    "project_id": "dashboard-app-30393",
+    "storage_bucket": "dashboard-app-30393.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:924004577795:android:372216808776260622d436",
+        "android_client_info": {
+          "package_name": "com.example.dashboard_flutter"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsyjoeVvc6Q1ZD1rCs6_HhvYrSeaJI2U4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

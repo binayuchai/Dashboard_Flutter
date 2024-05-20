@@ -12,8 +12,8 @@ class MainScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key:context.read<MenuAppController>().scaffoldKey,
-        drawer:SideMenu(),
-        body:SafeArea(
+        drawer:const SideMenu(),
+        body:const SafeArea(
          child:Row(
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
@@ -22,7 +22,8 @@ class MainScreen extends StatelessWidget {
                  child: DashboardScreen())
            ],
          )
-        )
+        ),
+
 
 
     );
