@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import './info_card.dart';
 
 import 'package:dashboard_flutter/models/MyFiles.dart';
-
+import './add_files.dart';
 
 class MyFiles extends StatelessWidget {
   const MyFiles({
@@ -27,7 +27,9 @@ class MyFiles extends StatelessWidget {
                 padding: EdgeInsets.symmetric(horizontal: defaultPadding*1.5,
                     vertical: 10)
               ),
-                onPressed: (){},
+                onPressed: (){
+                  showAddDialogBox(context);
+                },
                 icon:Icon(Icons.add),
               label:Text("Add New")
 

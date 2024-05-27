@@ -1,4 +1,5 @@
 import 'package:dashboard_flutter/controller/MenuAppController.dart';
+import 'package:dashboard_flutter/screens/authentications/login.dart';
 import 'package:dashboard_flutter/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -12,18 +13,21 @@ class Header extends StatelessWidget {
   }) : super(key: key);
 
   final AuthService _auth = AuthService();
-  @override
+
+     @override
   Widget build(BuildContext context) {
+
+
 
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
-   
+
    // Menu to show and hide
       children: [
         IconButton(
 
-            onPressed: context.read<MenuAppController>().controlMenu,
+            onPressed: Provider.of<MenuAppController>(context).controlMenu,
             icon: Icon(
                 Icons.menu,
 
@@ -32,6 +36,9 @@ class Header extends StatelessWidget {
         ElevatedButton.icon(
             onPressed: ()async{
               await _auth.signOut();
+              print("Signed out user");
+              Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const LoginWidget()));
+
 
 
             },

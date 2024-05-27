@@ -6,17 +6,26 @@ import 'package:provider/provider.dart';
 
 
 class MainScreen extends StatelessWidget {
-  const MainScreen({super.key});
+  const MainScreen({
+    Key? key
+}):super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key:context.read<MenuAppController>().scaffoldKey,
+    final menuAppController = Provider.of<MenuAppController>(context);
+
+    print("Authentication has reached to main screen");
+
+
+    return  Scaffold(
+      key:menuAppController.scaffoldKey,
+
         drawer:const SideMenu(),
-        body:const SafeArea(
+        body: const SafeArea(
          child:Row(
            crossAxisAlignment: CrossAxisAlignment.start,
            children: [
+
              Expanded(
                flex:1,
                  child: DashboardScreen())

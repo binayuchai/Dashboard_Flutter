@@ -1,8 +1,11 @@
 import 'package:dashboard_flutter/constants.dart';
 import 'package:dashboard_flutter/screens/authentications/signup_w.dart';
 import 'package:dashboard_flutter/services/auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+
+import '../main/main_screen.dart';
 
 
 
@@ -20,6 +23,9 @@ class _LoginWidgetState extends State<LoginWidget> {
   final TextEditingController _passwordController = TextEditingController();
 
   final AuthService _auth = AuthService();
+  final _formKey = GlobalKey<FormState>();    //to validate the form
+  String error = "";
+
 
   @override
   void dispose() {
@@ -32,6 +38,7 @@ class _LoginWidgetState extends State<LoginWidget> {
 
   @override
   Widget build(BuildContext context) {
+print("I am in login widget");
     return Theme(
         data: ThemeData.light(),
         child: SafeArea(
@@ -49,6 +56,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                     // widget will occupy the entire height of device screen.
 
                     child: Form(
+                      key:_formKey,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         crossAxisAlignment: CrossAxisAlignment.center,
@@ -77,13 +85,17 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     milliseconds: 1200), child: makeInput(
                                     label: "Email",
                                     hintText: 'Enter your email',
-                                    controller: _emailController)),
+                                    controller: _emailController,
+                                    validator:(val)=> _emailController.text.isEmpty ? "Enter your email address" : null
+                                )),
                                 FadeInUp(duration: const Duration(
                                     milliseconds: 1300), child: makeInput(
                                     label: "Password",
                                     obscureText: true,
                                     hintText: 'Enter your password',
-                                    controller: _passwordController))
+                                    controller: _passwordController,
+                                    validator: (val)=> _passwordController.text.isEmpty ? "Enter your password" : null
+                                ))
                       
                               ],
                             ),
@@ -93,18 +105,30 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   horizontal: defaultPadding),
                               child: MaterialButton(
                                   onPressed: () async {
-
-
-                                    print(_emailController.text);
-                                    print(_passwordController.text);
-                                    dynamic result = await _auth.signInAnon();
+                                    print("Clicked===========");
+                                    if(_formKey.currentState!.validate()){
+                                    dynamic result = await _auth.signInWithEmailPassword(_emailController.text, _passwordController.text);
                                     if (result == null) {
-                                      print("Error signing ");
+                                      setState(() {
+                                        error = "Please enter valid email or password";
+
+                                      });
                                     } else {
 
-                                      print("signed in..");
-                                      print(result.uid);
+
+                                      if(kDebugMode){
+                                        print("signed in..");
+
+                                      }
+
+                                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const MainScreen()));
+
                                     }
+
+
+                                    }
+
+
                                   },
                                   minWidth: double.infinity,
                       
@@ -121,6 +145,11 @@ class _LoginWidgetState extends State<LoginWidget> {
                       
                       
                           ),
+                          SizedBox(height: 12.0,),
+                          Text(
+                            error,
+                            style: TextStyle(color: Colors.red,fontSize: 16.0),
+                          ),
                           Padding(
                               padding: const EdgeInsets.all(30),
                               child: Row(
@@ -130,12 +159,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                                   const SizedBox(width: 5,),
                                   TextButton(
                                    onPressed: (){
-                                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUpWidget()));
+                                     // Navigator.of(context).push(MaterialPageRoute(builder: (context) => SignUpWidget()));
+                                     Navigator.push(context, MaterialPageRoute(builder: (context) => const SignUpWidget()));
+
                                    },
                                   child:const Text("Sign up", style: TextStyle(
                                  fontWeight: FontWeight.bold, fontSize: 16),))
 
-                      
+
                                 ],
                               )
                           )
@@ -156,7 +187,7 @@ class _LoginWidgetState extends State<LoginWidget> {
 }
 
 
-Widget makeInput({label,obscureText=false,hintText,controller}){
+Widget makeInput({label,obscureText=false,hintText,controller,validator}){
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: <Widget>[
@@ -171,6 +202,7 @@ Widget makeInput({label,obscureText=false,hintText,controller}){
         onChanged: (val){
           print("Value changed   $val");
         },
+        validator: validator,
 
         obscureText: obscureText,
         decoration: InputDecoration(

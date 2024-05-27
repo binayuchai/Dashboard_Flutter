@@ -1,4 +1,6 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dashboard_flutter/constants.dart';
+import 'package:dashboard_flutter/services/database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:dashboard_flutter/models/RecentFiles.dart';
@@ -27,20 +29,46 @@ class RecentFiles extends StatelessWidget {
               "Recent Files",
               style:Theme.of(context).textTheme.titleMedium,
           ),
-          Container(
-            width: double.infinity,
-            child: DataTable(
-              columnSpacing: defaultPadding,
-                columns: [
-                  DataColumn(label: Text("FileName")),
-                  DataColumn(label: Text("Date")),
-                  DataColumn(label: Text("Size")),
+          StreamBuilder<QuerySnapshot>(
+            stream: DatabaseService().files,
+            builder: (context,snapshot){
 
-                ],
-            rows:List.generate(
-                demoRecentFiles.length,
-                    (index) => recentFileDataRow(demoRecentFiles[index]))
-          )
+              if(snapshot.connectionState == ConnectionState.waiting){
+                return const CircularProgressIndicator();
+              }
+              else if(snapshot.hasError){
+                return Text('Error: ${snapshot.error}');
+              }
+              else{
+                final files = snapshot.data!.docs;
+                return Container(
+                    width: double.infinity,
+                    child: DataTable(
+                        columnSpacing: defaultPadding,
+                        columns: [
+                          DataColumn(label: Text("FileName")),
+                          DataColumn(label: Text("Date")),
+                          DataColumn(label: Text("Size")),
+
+                        ],
+                        rows:List.generate(
+                            files.length,
+                                (index){
+
+                              final data = files[index].data() as Map<String,dynamic>;
+
+                              return recentFileDataRow(data);
+                            })
+                    )
+                );
+
+
+              }
+
+
+
+            },
+
           ),
       ]
 
@@ -49,14 +77,14 @@ class RecentFiles extends StatelessWidget {
 }
 
 
-DataRow recentFileDataRow(RecentFile fileInfo){
+DataRow recentFileDataRow(Map<String,dynamic> data){
   return DataRow(
       cells: [
         DataCell(
             Row(
               children: [
                 Flexible(child:SvgPicture.asset(
-                  fileInfo.icon!,
+                  data['icon'],
                   height: 30,
                   width: 30,
 
@@ -65,12 +93,12 @@ DataRow recentFileDataRow(RecentFile fileInfo){
 
                 Padding(
                     padding: const EdgeInsets.symmetric(horizontal: defaultPadding),
-                       child:Text(fileInfo.title ?? ''),
+                       child:Text(data['file'] ?? ''),
                 )
 
               ],
             )),
-        DataCell(Text(fileInfo.date!)),
-        DataCell(Text(fileInfo.size!))
+        DataCell(Text(data['date']!)),
+        DataCell(Text(data['size']!))
       ]);
 }

@@ -24,13 +24,17 @@ class Wrapper extends StatelessWidget {
 
     //check either Home or Authenticate widget
 
-    if (user == null){
+    if (user != null){
+     print("User is  authenticated so returned to mainscreen widget");
 
-      return LoginWidget();
+   return const MainScreen();
 
     }
     else{
-      return MainScreen();
+
+    return const LoginWidget();
+
+
     }
 
   }

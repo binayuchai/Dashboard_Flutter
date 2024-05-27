@@ -3,6 +3,9 @@ import 'package:dashboard_flutter/screens/authentications/login.dart';
 import 'package:dashboard_flutter/services/auth.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:provider/provider.dart';
+
+import '../main/main_screen.dart';
 
 
 
@@ -41,6 +44,8 @@ class _SignupWidgetState extends State<SignUpWidget> {
 
   @override
   Widget build(BuildContext context) {
+print("I am in signup widget");
+
     return Theme(
         data:ThemeData.light(),
         child:SafeArea(
@@ -100,6 +105,10 @@ class _SignupWidgetState extends State<SignUpWidget> {
                                           });
 
 
+                                        }else{
+                                          print("Signup successfully");
+                                          Navigator.of(context).push(MaterialPageRoute(builder: (context) => const MainScreen()));
+
                                         }
                                     }
                                   },
@@ -133,7 +142,8 @@ class _SignupWidgetState extends State<SignUpWidget> {
 
                                         // Navigate to the login widget
 
-                                       Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginWidget()));
+                                       // Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginWidget()));
+                                       Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginWidget()));
 
                                       },
                                       child: Text("Login",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),)  )
