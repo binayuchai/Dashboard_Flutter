@@ -1,8 +1,11 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:firebase_storage/firebase_storage.dart';
+import 'package:intl/intl.dart';
 
 import 'package:image_picker/image_picker.dart';
 class AddDocumentForm extends StatefulWidget {
@@ -14,9 +17,8 @@ class AddDocumentForm extends StatefulWidget {
 
 class _AddDocumentFormState extends State<AddDocumentForm> {
 final TextEditingController _fileNameController = TextEditingController();
-final TextEditingController _sizeController = TextEditingController();
-final TextEditingController _dateController = TextEditingController();
 String? _imageFile;
+String? _imageSize;
 
 Future _getImage() async{
   try{
@@ -27,9 +29,16 @@ Future _getImage() async{
 
      if(pickedFile == null || pickedFile.files.single.path == null) return;
     final imageTemp = pickedFile.files.single.path!;
+    //Calculate the fileSize
+
+    final file = File(imageTemp);
+    final fileSizeInBytes = await file.length();
+    final fileSizeInMB = fileSizeInBytes / (1024*1024);
+
 
     setState(() {
       _imageFile = imageTemp;
+      _imageSize = fileSizeInMB.toStringAsFixed(1) + 'MB';
     });
   } on PlatformException catch(e){
 
@@ -47,24 +56,38 @@ Future<void> _uploadFile() async{
 
   }
   try{
+
     //Upload file to Firebase Storage
-    File file = File(_imageFile!);
     String fileName = _fileNameController.text.trim();
-    String fileSize = _sizeController.text.trim();
-    String date = _dateController.text.trim();
+    File file = File(_imageFile!);
 
     //upload file to  firebase storage
 
-    // Reference storageReference =  FirebaseStorage,instanc
+     Reference  ref =  FirebaseStorage.instance.ref().child('uploads/$fileName.svg');
+     final uploadTask = ref.putFile(file);
 
 
+    // Wait for the upload to complete
 
+    await uploadTask.whenComplete(()=>null);
+    final fileUrl = await ref.getDownloadURL();
 
+    String date = DateFormat('yyyy-MM-dd').format(DateTime.now());
+
+    // save metaData to FireStore
+    await FirebaseFirestore.instance.collection('files').add({
+      'title':fileName,
+      'icon':fileUrl,
+      'size':_imageSize,
+      'date':date,
+    });
+
+    print('File uploaded successfully');
+    Navigator.pop(context);
 
 
   }catch(e){
-
-
+  print('Failed to upload file: $e');
   }
 }
   @override
@@ -79,14 +102,7 @@ Future<void> _uploadFile() async{
               controller: _fileNameController,
               decoration: InputDecoration(labelText: 'File Name'),
             ),
-            TextField(
-              controller: _dateController,
-              decoration: InputDecoration(labelText: 'Date'),
-            ),
-            TextField(
-              controller: _sizeController,
-              decoration: InputDecoration(labelText: 'File Size'),
-            ),
+
              if(_imageFile != null)
                SizedBox(
                  height: 100,
@@ -115,7 +131,7 @@ Future<void> _uploadFile() async{
         ),
         TextButton(
             onPressed: (){
-
+              _uploadFile();
             },
             child: const Text('Add'))
       ],

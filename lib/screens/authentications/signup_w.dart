@@ -143,7 +143,7 @@ print("I am in signup widget");
                                         // Navigate to the login widget
 
                                        // Navigator.of(context).push(MaterialPageRoute(builder: (context) => LoginWidget()));
-                                       Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginWidget()));
+                                       Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginWidget()));
 
                                       },
                                       child: Text("Login",style: TextStyle(fontWeight: FontWeight.bold,fontSize: 16),)  )

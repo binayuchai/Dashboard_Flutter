@@ -45,7 +45,7 @@ class RecentFiles extends StatelessWidget {
                     width: double.infinity,
                     child: DataTable(
                         columnSpacing: defaultPadding,
-                        columns: [
+                        columns: const [
                           DataColumn(label: Text("FileName")),
                           DataColumn(label: Text("Date")),
                           DataColumn(label: Text("Size")),
